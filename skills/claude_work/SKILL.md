@@ -48,7 +48,7 @@ Steps:
 1. Ensure `claude_work/` and `claude_work/archive/` exist (run init mode first if not).
 2. Ask the user for the task id if not provided. Never guess.
 3. Create `claude_work/<task-id>/`.
-4. Scaffold the four files listed below with minimal placeholder content (see templates). Do not overwrite existing files — if a file exists, skip it and report.
+4. Create four empty files inside it: `prompts.md`, `implementation_plan.md`, `roadmap.md`, `notes.md`. Do not write any content, headings, or placeholders — other skills own the contents of these files. Do not overwrite existing files — if a file exists, skip it and report.
 5. Report the created path and the files scaffolded.
 
 ### 3. Archive task
@@ -66,54 +66,9 @@ Triggered by: user asks to save a prompt, update the plan, record progress, etc.
 
 Update the relevant file (`prompts.md`, `implementation_plan.md`, `roadmap.md`, `notes.md`) by appending. Use dated sections (`## YYYY-MM-DD`) when adding new entries so history is preserved.
 
-## File templates
+## File contents
 
-Keep scaffolds minimal — placeholders only. The user fills them in or asks Claude to update them.
-
-**prompts.md**
-```markdown
-# Prompts — <task-id>
-
-Record prompts used for planning, implementation, review, etc. Group by phase.
-
-## Planning
-
-## Implementation
-
-## Review
-```
-
-**implementation_plan.md**
-```markdown
-# Implementation plan — <task-id>
-
-## Goal
-
-## Scope
-
-## Steps
-
-## Out of scope
-```
-
-**roadmap.md**
-```markdown
-# Roadmap — <task-id>
-
-Track progress with dated entries.
-
-## YYYY-MM-DD
-- 
-```
-
-**notes.md**
-```markdown
-# Notes — <task-id>
-
-Free-form documentation, decisions, links, references.
-```
-
-Replace `<task-id>` in the headings with the actual task id when scaffolding.
+This skill does NOT define the structure of the scaffolded files. Create them empty. Other skills (e.g. `research`, `commit`, task-specific workflows) own what goes into each file and append their own sections as work progresses.
 
 ## Non-goals
 

@@ -11,6 +11,16 @@ You are a researcher. Your job is to take a rough feature description and produc
 
 Execute these phases in order. Do not skip.
 
+### 0. Locate the claude_work task directory
+Before any investigation, determine which `claude_work/<task-id>/` this research belongs to — the final brief will be appended to `prompts.md` there (see phase 7).
+
+Resolution order:
+1. If the user's message names a task id, use it.
+2. Else, list non-archived directories under `<repo-root>/claude_work/` (exclude `archive/`). If exactly one exists and the user has not specified otherwise, confirm with them in one line ("Research for task `<id>`?"). If multiple exist, ask the user to pick.
+3. If `claude_work/` or the task dir does not exist, ask the user whether to create it (via the `claude_work` skill) or proceed without saving. Never create directories silently from within this skill.
+
+Hold the resolved path in mind for phase 7. Do not mention it again until then.
+
 ### 1. Parse the request
 Read the user's task description carefully. Identify:
 - The core functional goal (one sentence).
@@ -64,6 +74,16 @@ Output a markdown document with these sections, in this order:
 - Reference every file by full path. Reference lines when pointing to specific code.
 - Never invent APIs, fields, or endpoints. If unsure whether something exists, investigate with a tool call; do not fabricate.
 - State "unused but present" when referencing infrastructure that exists in code but is not yet wired up — these are often strong signals about intended direction.
+
+### 7. Persist the brief to claude_work
+After presenting the brief to the user, append it to `<repo-root>/claude_work/<task-id>/prompts.md` under the `## Planning` section (resolved in phase 0).
+
+Rules:
+- Append — do not overwrite. If prior Planning entries exist, add below them.
+- Wrap the appended block with a dated subheading: `### YYYY-MM-DD — research brief` (use today's date).
+- If the file is empty or has no `## Planning` heading, create the heading, then add the dated subheading and the brief.
+- If the user declined a task directory in phase 0, skip this step and report that the brief was not persisted.
+- Report the file path written to in one line. Do not re-print the brief contents.
 
 ## Policy defaults (apply unless user overrides)
 

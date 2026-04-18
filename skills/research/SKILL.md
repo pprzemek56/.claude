@@ -70,7 +70,7 @@ Output a markdown document with these sections, in this order:
 
 ### 6. Output rules for the brief
 - Output **only the brief contents**. Do not wrap it with a "prompt for planning agent" header or any meta-framing. The user composes the final prompt themselves.
-- Polish or English — match the user's language.
+- Polish or English — match the question's language.
 - Reference every file by full path. Reference lines when pointing to specific code.
 - Never invent APIs, fields, or endpoints. If unsure whether something exists, investigate with a tool call; do not fabricate.
 - State "unused but present" when referencing infrastructure that exists in code but is not yet wired up — these are often strong signals about intended direction.

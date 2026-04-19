@@ -2,41 +2,35 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "outputStyle": "Professional",
   "permissions": {
-    "allow": [
-      "Bash(npm run *)",
-      "Bash(python *)",
-      "Bash(pip install *)",
-      "Bash(git status)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
-      "Bash(git add:*)",
-      "Bash(git checkout:*)",
-      "Bash(git branch)",
-      "Bash(ls *)",
-      "Bash(cat *)",
-      "Bash(mkdir *)",
-      "Bash(mv *)",
-      "Bash(file *)",
-      "Bash(cd *)",
-      "Bash(touch *)",
-      "Bash(codex --version)",
-      "Bash(poetry init:*)",
-      "Bash(poetry add:*)",
-      "Bash(poetry run:*)",
-      "Bash(poetry install *:*)",
-      "Bash(poetry lock *:*)",
-      "Bash(npm install:*)",
-      "Bash(npm uninstall:*)",
-      "Bash(npx tsc:*)",
-      "Bash(docker build:*)",
-      "Bash(docker compose:*)",
-      "Bash(docker exec:*)",
-      "Bash(curl -s http://localhost:*)"
-    ],
+    "allow": ["Bash(*)"],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/.venv/bin/python .claude/hooks/bash_guard.py",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/.venv/bin/python .claude/hooks/file_guard.py",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

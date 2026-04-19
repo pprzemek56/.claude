@@ -1,0 +1,31 @@
+# Pliki, których NIE wolno czytać/edytować/nadpisywać.
+deny:
+  - pattern: '(^|/)\.env($|\.)'
+    reason: '.env file'
+  - pattern: '(^|/)\.envrc$'
+    reason: '.envrc (direnv)'
+  - pattern: '(^|/)\.ssh/'
+    reason: 'SSH keys'
+  - pattern: '(^|/)\.aws/credentials$'
+    reason: 'AWS credentials'
+  - pattern: '(^|/)\.netrc$'
+    reason: 'netrc'
+  - pattern: '(^|/)\.pypirc$'
+    reason: 'PyPI credentials'
+  - pattern: '(^|/)\.npmrc$'
+    reason: 'npm token'
+  - pattern: '(^|/)id_(rsa|ed25519|ecdsa|dsa)(\.pub)?$'
+    reason: 'SSH private key'
+  - pattern: '\.(pem|key|pfx|p12)$'
+    reason: 'private key/cert'
+  - pattern: '(^|/)secrets?\.ya?ml$'
+    reason: 'secrets yaml'
+  - pattern: '(^|/)credentials\.json$'
+    reason: 'credentials json'
+
+# Wyjątki — przykłady typu plików szablonowych są bezpieczne.
+allow:
+  - pattern: '\.env\.(example|template|sample)$'
+    reason: 'szablon .env'
+  - pattern: '\.env\.schema$'
+    reason: 'schema .env'

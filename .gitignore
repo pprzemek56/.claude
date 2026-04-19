@@ -1,2 +1,5 @@
 .idea/
 settings.local.json
+hooks/.venv/
+hooks/guard.log
+hooks/guard_rules.local.yaml

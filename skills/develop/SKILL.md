@@ -88,14 +88,27 @@ Deviations are acceptable. Silent deviations are not.
 
 ## Phase 7 — Review integration (if the user returns with review findings)
 
-When the user presents review output from another agent (code review, security review, second-opinion audit):
+**Source of findings.** When the user says anything review-shaped — "I did a review", "the reviewer found X", "check notes", "review done", "findings saved", "zrobiłem review", "sprawdź uwagi", or just "apply the review" — treat it as a signal to go read `TASK_DIR/notes.md`. The reviewer agent writes all findings into that file; the user does not paste them into chat. Do not wait for the content, do not ask the user to summarise. Read `notes.md` yourself, in full, before any other action.
 
-1. Build a verdict table. For each finding: id, verdict (valid / reject), one-line rationale.
-2. For valid findings — implement immediately. Do not debate.
-3. For rejected findings — state the reason briefly: plan conflict, framework constraint, reviewer missing context, harmless by reviewer's own admission.
-4. Run the full acceptance gates again.
-5. Append `## Review fixes` section to `roadmap.md` listing what changed and what was rejected, with reasons.
-6. Smaller follow-ups (addendum from the same review round) can be nested under the original finding as `(addendum)` rather than creating a new section.
+If `notes.md` is missing or empty, ask the user where the findings live — do not invent content.
+
+**Evaluation (do not rubber-stamp).** You are not a conduit for the reviewer's opinion. The reviewer did not see `implementation_plan.md` and usually did not see the Phase 2 clarifications. Many findings land because the reviewer misunderstood scope, contract, or explicit plan decisions. Your job is to filter.
+
+For each finding, classify as **Accept** or **Reject** with a one-line rationale:
+
+- **Accept** when the finding is a real bug, a real correctness gap, or a real hardening that doesn't conflict with the plan. Implement immediately.
+- **Reject** when any of: the plan explicitly specifies the shape the reviewer wants changed; the code is out-of-scope per the plan; the finding targets a stub the plan marked as stub; the reviewer clearly lacked planning context; the "fix" would introduce a deviation from a LOCKED decision; the finding is pure style/taste with no drift risk.
+
+"Accept because the reviewer said so" is not a valid rationale. Neither is "Reject because I don't feel like it." Tie the verdict to a specific plan line, framework constraint, or concrete risk.
+
+**Execution.**
+
+1. Read `notes.md` fully before writing anything.
+2. Build the verdict table (id, verdict, one-line rationale) and show it to the user before implementing, so they can see the split and override any call.
+3. Implement accepted findings. No extras beyond what the finding asks for.
+4. Run the full acceptance gates again (typecheck, lint, build, any live smoke that the change could plausibly break).
+5. Append a `## Review fixes` section to `roadmap.md` listing every finding — accepted or rejected — with its verdict and the reason. Rejections need a reason that will still make sense in six months.
+6. Smaller follow-ups from the same review round can be nested under the original finding as `(addendum)` rather than creating a new section.
 
 ## Phase 8 — Final summary
 

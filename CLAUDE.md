@@ -8,6 +8,7 @@
 - When fixing a bug, diagnose the root cause first, then propose a fix. No guessing.
 - Preserve existing code style, naming conventions, and patterns. Match what's already there.
 - If you're unsure between multiple approaches, briefly present the trade-offs and let the user decide.
+- Never implement, plan, research on any unit tests for the project. 
 
 ---
 

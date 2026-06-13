@@ -58,8 +58,8 @@ Iterate: answers often surface new edge cases — ask a second (smaller) round i
 ### 4. Re-verify against the code
 After the user answers, validate their mental model against the repo before writing the brief. If the user says "we attach comments to the `articles` collection" but the code shows Facebook posts live in a separate `facebook_posts` collection, flag the discrepancy and resolve it with the user. Do this BEFORE drafting the brief — not after.
 
-### 5. Produce the brief for the planning agent
-Output a markdown document with these sections, in this order:
+### 5. Compose the brief for the planning agent
+Compose a markdown document with these sections, in this order. This document is written to the task file in phase 7 — do **not** print it to the chat (see phase 8):
 
 1. **Cel biznesowy** — one short paragraph.
 2. **Decyzje projektowe (USTALONE — nie podważać)** — everything the user locked in, grouped by topic (toggle, scope, storage, integration, scheduling, etc.). Each decision stated as a directive, not a discussion. Include concrete field names, types, defaults, and file paths where the change lands.
@@ -68,22 +68,30 @@ Output a markdown document with these sections, in this order:
 5. **Czego plan NIE zawiera** — hard exclusions (e.g., no frontend, no new REST endpoints, no auth changes, no global feature flag).
 6. **Kluczowe pliki referencyjne** — annotated list of paths the planning agent must read before drafting. Annotate each with what it contains or why it matters.
 
-### 6. Output rules for the brief
-- Output **only the brief contents**. Do not wrap it with a "prompt for planning agent" header or any meta-framing. The user composes the final prompt themselves.
+### 6. Content rules for the brief
+- The brief contains **only the brief contents**. Do not wrap it with a "prompt for planning agent" header or any meta-framing. The user composes the final prompt themselves.
 - Polish or English — match the question's language.
 - Reference every file by full path. Reference lines when pointing to specific code.
 - Never invent APIs, fields, or endpoints. If unsure whether something exists, investigate with a tool call; do not fabricate.
 - State "unused but present" when referencing infrastructure that exists in code but is not yet wired up — these are often strong signals about intended direction.
 
 ### 7. Persist the brief to claude_work
-After presenting the brief to the user, append it to `<repo-root>/claude_work/<task-id>/prompts.md` under the `## Planning` section (resolved in phase 0).
+Append the composed brief to `<repo-root>/claude_work/<task-id>/prompts.md` under the `## Planning` section (resolved in phase 0). This is the primary output — the brief lives in the file, not the chat.
 
 Rules:
 - Append — do not overwrite. If prior Planning entries exist, add below them.
 - Wrap the appended block with a dated subheading: `### YYYY-MM-DD — research brief` (use today's date).
 - If the file is empty or has no `## Planning` heading, create the heading, then add the dated subheading and the brief.
 - If the user declined a task directory in phase 0, skip this step and report that the brief was not persisted.
-- Report the file path written to in one line. Do not re-print the brief contents.
+- Do not re-print the brief contents in the chat — phase 8 covers what to report.
+
+### 8. Report back — summary only, never the full brief
+The full brief now lives in the file. Do **not** paste it into the chat. Respond with a short summary:
+- The path written to (`claude_work/<task-id>/prompts.md`), or a note that it was not persisted if the user declined a task directory in phase 0.
+- 3–6 bullets capturing the locked-in decisions and the key deliverables the planning agent must produce.
+- Any unresolved blocker or open question that still needs the user.
+
+Only print the full brief if the user explicitly asks to see it.
 
 ## Policy defaults (apply unless user overrides)
 

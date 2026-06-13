@@ -84,29 +84,17 @@ Examples that count as deviations:
 
 Deviations are acceptable. Silent deviations are not.
 
-## Phase 7 — Review integration (if the user returns with review findings)
+## Phase 7 — Re-execution after code review
 
-**Source of findings.** When the user says anything review-shaped — "I did a review", "the reviewer found X", "check notes", "review done", "findings saved", "zrobiłem review", "sprawdź uwagi", or just "apply the review" — treat it as a signal to go read `TASK_DIR/notes.md`. The reviewer agent writes all findings into that file; the user does not paste them into chat. Do not wait for the content, do not ask the user to summarise. Read `notes.md` yourself, in full, before any other action.
+**Trigger.** When the user signals the code review is done — "review done", "review jest gotowe", "code review gotowe", "apply the review", "zrobiłem review", "popraw plan", "weź feedback z review", or anything review-shaped — do NOT read `notes.md` and judge findings yourself. In this workflow the reviewer's findings have already been turned into a plan: the `planning` skill has **overwritten** `TASK_DIR/implementation_plan.md` with a corrections-only plan that specifies the fixes for those findings.
 
-If `notes.md` is missing or empty, ask the user where the findings live — do not invent content.
+Your job is to implement that overwritten plan exactly as you implemented the original — run the plan once more, from the file.
 
-**Evaluation (do not rubber-stamp).** You are not a conduit for the reviewer's opinion. The reviewer did not see `implementation_plan.md` and usually did not see the Phase 2 clarifications. Many findings land because the reviewer misunderstood scope, contract, or explicit plan decisions. Your job is to filter.
-
-For each finding, classify as **Accept** or **Reject** with a one-line rationale:
-
-- **Accept** when the finding is a real bug, a real correctness gap, or a real hardening that doesn't conflict with the plan. Implement immediately.
-- **Reject** when any of: the plan explicitly specifies the shape the reviewer wants changed; the code is out-of-scope per the plan; the finding targets a stub the plan marked as stub; the reviewer clearly lacked planning context; the "fix" would introduce a deviation from a LOCKED decision; the finding is pure style/taste with no drift risk.
-
-"Accept because the reviewer said so" is not a valid rationale. Neither is "Reject because I don't feel like it." Tie the verdict to a specific plan line, framework constraint, or concrete risk.
-
-**Execution.**
-
-1. Read `notes.md` fully before writing anything.
-2. Build the verdict table (id, verdict, one-line rationale) and show it to the user before implementing, so they can see the split and override any call.
-3. Implement accepted findings. No extras beyond what the finding asks for.
-4. Run the full acceptance gates again (typecheck, lint, build, any live smoke that the change could plausibly break).
-5. Report a `Review fixes` section to the user listing every finding — accepted or rejected — with its verdict and the reason. Rejections need a reason that will still make sense in six months.
-6. Smaller follow-ups from the same review round can be nested under the original finding as `(addendum)` rather than listed separately.
+1. Re-read `TASK_DIR/implementation_plan.md` in full. It is now the corrections plan, not the version you ran before — do not rely on memory of the previous contents.
+2. Sanity-check that it actually changed. If the file still reads as the original plan (no corrections, same steps as your last run), STOP and tell the user the corrections plan is not in place yet — the `planning` rewrite likely hasn't run. Do not reconstruct corrections from `notes.md` yourself; that is the `planning` skill's job, not yours.
+3. Re-run the normal execution machinery over the corrections plan: Phase 3 task tracking for its blocks, the Phase 4 execution loop (read step → read dependencies → apply change → run Check) top-to-bottom, Phase 5 issue logging, Phase 6 deviations. Re-ask the Phase 2 clarification questions only if the corrections introduce new command / stub / commit / live-test decisions; otherwise carry the answers from the original run.
+4. After the blocks, run the plan's full acceptance gates (typecheck, lint, build, any live smoke the changes could break).
+5. Produce a Phase 8 final summary scoped to the corrections: gates passing, files touched, manual actions, deviations.
 
 ## Phase 8 — Final summary
 
